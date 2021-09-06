@@ -27,7 +27,8 @@ from basictoken import BASICToken as Token
 from lexer import Lexer
 from program import Program
 from sys import stderr
-
+from fullsize import get_size
+import gc
 
 def main():
 
@@ -53,7 +54,8 @@ def main():
 
         stmt = input('> ')
 
-        try:
+        #try:
+        if True:
             tokenlist = lexer.tokenize(stmt)
 
             # Execute commands directly, otherwise
@@ -98,6 +100,7 @@ def main():
                 elif tokenlist[0].category == Token.LOAD:
                     program.load(tokenlist[1].lexeme)
                     print("Program read from file")
+                    print("Size: " + str(get_size(program)))
 
                 # Delete the program from memory
                 elif tokenlist[0].category == Token.NEW:
@@ -112,8 +115,8 @@ def main():
 
         # Trap all exceptions so that interpreter
         # keeps running
-        except Exception as e:
-            print(e, file=stderr, flush=True)
+        #except Exception as e:
+        #    print(e, file=stderr, flush=True)
 
 
 if __name__ == "__main__":

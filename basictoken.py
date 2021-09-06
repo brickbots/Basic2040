@@ -130,6 +130,11 @@ class BASICToken:
         'MAX', 'MIN', 'INSTR', 'AND', 'OR', 'NOT', 'PI',
         'RNDINT', 'TAB', 'SEMICOLON', 'LEFT', 'RIGHT']
 
+        #for i in range(len(catnames)):
+            #assign_string = catnames[i] + "=" + str(i)
+            #eval(assign_string)
+
+
         smalltokens = {'=': ASSIGNOP, '(': LEFTPAREN, ')': RIGHTPAREN,
                        '+': PLUS, '-': MINUS, '*': TIMES, '/': DIVIDE,
                        '\n': NEWLINE, '<': LESSER,
@@ -163,23 +168,57 @@ class BASICToken:
                     'PI': PI, 'RNDINT': RNDINT, 'TAB': TAB,
                     'LEFT$': LEFT, 'RIGHT$': RIGHT}
 
+        # These allow conversion of token integers to lexemes
+        lexemes = dict((v,k) for k,v in {**keywords, **smalltokens}.items())
+
+
         # Functions
         functions = {ABS, ATN, COS, EXP, INT, LOG, POW, RND, SIN, SQR, TAN,
                      CHR, ASC, MID, TERNARY, STR, VAL, LEN, UPPER, LOWER,
                      ROUND, MAX, MIN, INSTR, PI, RNDINT, TAB, LEFT, RIGHT}
 
-        def __init__(self, column, category, lexeme):
 
-            self.column = column      # Column in which token starts
-            self.category = category  # Category of the token
-            self.lexeme = lexeme      # Token in string form
+        # These tokens need full lexemes
+        lexeme_tokens = [STRING, UNSIGNEDFLOAT, NAME, UNSIGNEDINT]
+
+        def __init__(self, category, lexeme):
+
+            self.__category = category  # Category of the token
+            self.__lexeme = None
+
+            if category in self.lexeme_tokens:
+                self.__lexeme = lexeme      # Token in string form
+
+            if category == None:
+                self.__lexeme = lexeme
+
+        @property
+        def lexeme(self):
+            if self.__lexeme != None:
+                return self.__lexeme
+
+            return self.lexemes[self.__category]
+
+        @lexeme.setter
+        def lexeme(self, value):
+            if self.__category in self.lexeme_tokens or self.__category == None:
+                self.__lexeme = value
+
+        @property
+        def category(self):
+            return self.__category
+
+        @category.setter
+        def category(self, value):
+            self.__category = value
+            if self.__category not in self.lexeme_tokens:
+                self.__lexeme = None
 
         def pretty_print(self):
             """Pretty prints the token
 
             """
-            print('Column:', self.column,
-                  'Category:', self.catnames[self.category],
+            print('Category:', self.catnames[self.category],
                   'Lexeme:', self.lexeme)
 
         def print_lexeme(self):
