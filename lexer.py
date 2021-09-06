@@ -66,9 +66,8 @@ class Lexer:
             while c.isspace():
                 c = self.__get_next_char()
 
-            # Construct a token, column count already
-            # incremented
-            token = Token(self.__column - 1, None, '')
+            # Construct a token
+            token = Token(None, '')
 
             # Process strings
             if c == '"':
