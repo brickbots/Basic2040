@@ -25,7 +25,6 @@ from .basictoken import BASICToken as Token
 from .lexer import Lexer
 from .program import Program
 from sys import stderr
-from gc import free_mem
 
 class Interpreter:
     """
