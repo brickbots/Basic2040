@@ -1,5 +1,5 @@
-from pybasic import interpreter
-from pybasic.term import CursesTerm
+from basic2040 import interpreter
+from basic2040.term import CursesTerm
 from curses import wrapper
 
 def main(stdscr):

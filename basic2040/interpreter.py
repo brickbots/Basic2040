@@ -39,6 +39,7 @@ class Interpreter:
         self.lexer = Lexer()
         if not terminal:
             from .term import SimpleTerm
+
             self.__terminal = SimpleTerm()
         else:
             self.__terminal = terminal
@@ -52,14 +53,13 @@ class Interpreter:
 
         banner = """
             PPPP   Y   Y  BBBB    AAA    SSSS    I     CCC
-            P   P   Y Y   B   B  A   A  S        I    C   
+            P   P   Y Y   B   B  A   A  S        I    C
             P   P   Y Y   B   B  A   A  S        I    C
             PPPP     Y    BBBB   AAAAA  SSSS     I    C
             P        Y    B   B  A   A      S    I    C
             P        Y    B   B  A   A      S    I    C
             P        Y    BBBB   A   A  SSSS     I     CCC
             """
-
         self.__terminal.print(banner)
         self.__interpreter()
 
@@ -156,12 +156,18 @@ class Interpreter:
 
                     # Save the program to disk
                     elif tokenlist[0].category == Token.SAVE:
+                        filepath = tokenlist[1].lexeme
+                        if "/" not in filepath:
+                            filepath = "BAS/" + filepath
                         self.program.save(tokenlist[1].lexeme)
                         self.__terminal.print("Program written to file")
 
                     # Load the program from disk
                     elif tokenlist[0].category == Token.LOAD:
-                        self.program.load(tokenlist[1].lexeme)
+                        filepath = tokenlist[1].lexeme
+                        if "/" not in filepath:
+                            filepath = "BAS/" + filepath
+                        self.program.load(filepath)
                         self.__terminal.print("Program read from file")
 
                     # Delete the program from memory

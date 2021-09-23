@@ -1,6 +1,6 @@
 import sys
-from pybasic.term import TestTerm
-from pybasic.program import Program
+from basic2040.term import TestTerm
+from basic2040.program import Program
 
 
 
