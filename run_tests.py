@@ -10,7 +10,7 @@ def main():
         print("+++++++++ TESTS STARTING +++++")
         terminal = TestTerm()
         test_program = Program(terminal)
-        test_program.load("tests.bas")
+        test_program.load("BAS/tests.bas")
         test_program.execute()
         print("+++++++++ TESTS COMPLETE +++++")
         #Exit with success code

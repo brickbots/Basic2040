@@ -25,7 +25,7 @@ from .basictoken import BASICToken as Token
 from .lexer import Lexer
 from .program import Program
 from sys import stderr
-
+from gc import free_mem
 
 class Interpreter:
     """
@@ -50,15 +50,12 @@ class Interpreter:
         loop. Can be overloaded in subclassing to
         implement custom startup behavior
         """
-
         banner = """
-            PPPP   Y   Y  BBBB    AAA    SSSS    I     CCC
-            P   P   Y Y   B   B  A   A  S        I    C
-            P   P   Y Y   B   B  A   A  S        I    C
-            PPPP     Y    BBBB   AAAAA  SSSS     I    C
-            P        Y    B   B  A   A      S    I    C
-            P        Y    B   B  A   A      S    I    C
-            P        Y    BBBB   A   A  SSSS     I     CCC
+    ____  ___   _____ _____________   ____  __ __  ____
+   / __ )/   | / ___//  _/ ____/__ \ / __ \/ // / / __ \\
+  / __  / /| | \__ \ / // /    __/ // / / / // /_/ / / /
+ / /_/ / ___ |___/ // // /___ / __// /_/ /__  __/ /_/ /
+/_____/_/  |_/____/___/\____//____/\____/  /_/  \____/
             """
         self.__terminal.print(banner)
         self.__interpreter()

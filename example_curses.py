@@ -1,5 +1,5 @@
 from basic2040 import interpreter
-from basic2040.term import CursesTerm
+from cursesterm import CursesTerm
 from curses import wrapper
 
 def main(stdscr):
