@@ -162,7 +162,7 @@ class Program:
         line_numbers = self.line_numbers()
 
         for line_number in line_numbers:
-            program_text += self.str_statement(line_number)
+            program_text += self.str_statement(line_number) + "\n"
 
         return program_text
 
@@ -179,7 +179,6 @@ class Program:
 
             else:
                 line_text += token.lexeme + " "
-        line_text += "\n"
         return line_text
 
     def save(self, file):
