@@ -26,7 +26,6 @@ from .lexer import Lexer
 
 
 class BASICData:
-
     def __init__(self):
         # array of line numbers to represent data statements
         self.__datastmts = {}
@@ -34,16 +33,15 @@ class BASICData:
         # Data pointer
         self.__next_data = 0
 
-
     def delete(self):
         self.__datastmts.clear()
         self.__next_data = 0
 
-    def delData(self,line_number):
+    def delData(self, line_number):
         if self.__datastmts.get(line_number) != None:
             del self.__datastmts[line_number]
 
-    def addData(self,line_number,tokenlist):
+    def addData(self, line_number, tokenlist):
         """
         Adds the supplied token list
         to the program's DATA store. If a token list with the
@@ -60,8 +58,7 @@ class BASICData:
         except TypeError as err:
             raise TypeError("Invalid line number: " + str(err))
 
-
-    def getTokens(self,line_number):
+    def getTokens(self, line_number):
         """
         returns the tokens from the program DATA statement
 
@@ -71,11 +68,14 @@ class BASICData:
 
         return self.__datastmts.get(line_number)
 
-    def readData(self,read_line_number):
+    def readData(self, read_line_number):
 
         if len(self.__datastmts) == 0:
-            raise RuntimeError('No DATA statements available to READ ' +
-                               'in line ' + str(read_line_number))
+            raise RuntimeError(
+                "No DATA statements available to READ "
+                + "in line "
+                + str(read_line_number)
+            )
 
         data_values = []
 
@@ -84,36 +84,38 @@ class BASICData:
 
         if self.__next_data == 0:
             self.__next_data = line_numbers[0]
-        elif line_numbers.index(self.__next_data) < len(line_numbers)-1:
-            self.__next_data = line_numbers[line_numbers.index(self.__next_data)+1]
+        elif line_numbers.index(self.__next_data) < len(line_numbers) - 1:
+            self.__next_data = line_numbers[line_numbers.index(self.__next_data) + 1]
         else:
-            raise RuntimeError('No DATA statements available to READ ' +
-                               'in line ' + str(read_line_number))
+            raise RuntimeError(
+                "No DATA statements available to READ "
+                + "in line "
+                + str(read_line_number)
+            )
 
         tokenlist = self.__datastmts[self.__next_data]
 
         sign = 1
         for token in tokenlist[1:]:
             if token.category != Token.COMMA:
-                #data_values.append(token.lexeme)
+                # data_values.append(token.lexeme)
 
                 if token.category == Token.STRING:
                     data_values.append(token.lexeme)
                 elif token.category == Token.UNSIGNEDINT:
-                    data_values.append(sign*int(token.lexeme))
+                    data_values.append(sign * int(token.lexeme))
                 elif token.category == Token.UNSIGNEDFLOAT:
-                    data_values.append(sign*eval(token.lexeme))
+                    data_values.append(sign * eval(token.lexeme))
                 elif token.category == Token.MINUS:
                     sign = -1
-                #else:
-                    #data_values.append(token.lexeme)
+                # else:
+                # data_values.append(token.lexeme)
             else:
                 sign = 1
 
-
         return data_values
 
-    def restore(self,restoreLineNo):
+    def restore(self, restoreLineNo):
         if restoreLineNo == 0 or restoreLineNo in self.__datastmts:
 
             if restoreLineNo == 0:
@@ -128,14 +130,16 @@ class BASICData:
                 if indexln == 0:
                     self.__next_data = 0
                 else:
-                    self.__next_data = line_numbers[indexln-1]
+                    self.__next_data = line_numbers[indexln - 1]
         else:
-            raise RuntimeError('Attempt to RESTORE but no DATA ' +
-                               'statement at line ' + str(restoreLineNo))
+            raise RuntimeError(
+                "Attempt to RESTORE but no DATA "
+                + "statement at line "
+                + str(restoreLineNo)
+            )
 
 
 class Program:
-
     def __init__(self, terminal):
         # Dictionary to represent program
         # statements, keyed by line number
@@ -231,14 +235,15 @@ class Program:
         try:
             line_number = int(tokenlist[0].lexeme)
             if tokenlist[1].lexeme == "DATA":
-                self.__data.addData(line_number,tokenlist[1:])
-                self.__program[line_number] = [tokenlist[1],]
+                self.__data.addData(line_number, tokenlist[1:])
+                self.__program[line_number] = [
+                    tokenlist[1],
+                ]
             else:
                 self.__program[line_number] = tokenlist[1:]
 
         except TypeError as err:
-            raise TypeError("Invalid line number: " +
-                            str(err))
+            raise TypeError("Invalid line number: " + str(err))
 
     def line_numbers(self):
         """Returns a list of all the
@@ -264,8 +269,7 @@ class Program:
 
         """
         if line_number not in self.__program.keys():
-            raise RuntimeError("Line number " + line_number +
-                               " does not exist")
+            raise RuntimeError("Line number " + line_number + " does not exist")
 
         statement = self.__program[line_number]
 
@@ -279,7 +283,7 @@ class Program:
         """Execute the program"""
 
         self.__parser = BASICParser(self.__data, self.__terminal)
-        self.__data.restore(0) # reset data pointer
+        self.__data.restore(0)  # reset data pointer
 
         line_numbers = self.line_numbers()
 
@@ -307,8 +311,10 @@ class Program:
                             index = line_numbers.index(flowsignal.ftarget)
 
                         except ValueError:
-                            raise RuntimeError("Invalid line number supplied in GOTO or conditional branch: "
-                                               + str(flowsignal.ftarget))
+                            raise RuntimeError(
+                                "Invalid line number supplied in GOTO or conditional branch: "
+                                + str(flowsignal.ftarget)
+                            )
 
                         self.set_next_line_number(flowsignal.ftarget)
 
@@ -320,7 +326,9 @@ class Program:
                             self.__return_stack.append(line_numbers[index + 1])
 
                         else:
-                            raise RuntimeError("GOSUB at end of program, nowhere to return")
+                            raise RuntimeError(
+                                "GOSUB at end of program, nowhere to return"
+                            )
 
                         # Set the index to be the subroutine start line
                         # number
@@ -328,8 +336,10 @@ class Program:
                             index = line_numbers.index(flowsignal.ftarget)
 
                         except ValueError:
-                            raise RuntimeError("Invalid line number supplied in subroutine call: "
-                                               + str(flowsignal.ftarget))
+                            raise RuntimeError(
+                                "Invalid line number supplied in subroutine call: "
+                                + str(flowsignal.ftarget)
+                            )
 
                         self.set_next_line_number(flowsignal.ftarget)
 
@@ -340,12 +350,17 @@ class Program:
                             index = line_numbers.index(self.__return_stack.pop())
 
                         except ValueError:
-                            raise RuntimeError("Invalid subroutine return in line " +
-                                               str(self.get_next_line_number()))
+                            raise RuntimeError(
+                                "Invalid subroutine return in line "
+                                + str(self.get_next_line_number())
+                            )
 
                         except IndexError:
-                            raise RuntimeError("RETURN encountered without corresponding " +
-                                               "subroutine call in line " + str(self.get_next_line_number()))
+                            raise RuntimeError(
+                                "RETURN encountered without corresponding "
+                                + "subroutine call in line "
+                                + str(self.get_next_line_number())
+                            )
 
                         self.set_next_line_number(line_numbers[index])
 
@@ -357,7 +372,7 @@ class Program:
                         # Put loop line number on the stack so
                         # that it can be returned to when the loop
                         # repeats
-                        #self.__return_stack.append(self.get_next_line_number())
+                        # self.__return_stack.append(self.get_next_line_number())
                         self.__return_stack.append(line_numbers[index])
 
                         # Continue to the next statement in the loop
@@ -379,8 +394,10 @@ class Program:
                             next_line_number = line_numbers[index]
                             temp_tokenlist = self.__program[next_line_number]
 
-                            if temp_tokenlist[0].category == Token.NEXT and \
-                               len(temp_tokenlist) > 1:
+                            if (
+                                temp_tokenlist[0].category == Token.NEXT
+                                and len(temp_tokenlist) > 1
+                            ):
                                 # Check the loop variable to ensure we have not found
                                 # the NEXT statement for a nested loop
                                 if temp_tokenlist[1].lexeme == flowsignal.ftarget:
@@ -388,7 +405,9 @@ class Program:
                                     # is one
                                     index = index + 1
                                     if index < len(line_numbers):
-                                        next_line_number = line_numbers[index]  # Statement after the NEXT
+                                        next_line_number = line_numbers[
+                                            index
+                                        ]  # Statement after the NEXT
                                         self.set_next_line_number(next_line_number)
                                         break
 
@@ -406,12 +425,17 @@ class Program:
                             index = line_numbers.index(self.__return_stack.pop())
 
                         except ValueError:
-                            raise RuntimeError("Invalid loop exit in line " +
-                                               str(self.get_next_line_number()))
+                            raise RuntimeError(
+                                "Invalid loop exit in line "
+                                + str(self.get_next_line_number())
+                            )
 
                         except IndexError:
-                            raise RuntimeError("NEXT encountered without corresponding " +
-                                               "FOR loop in line " + str(self.get_next_line_number()))
+                            raise RuntimeError(
+                                "NEXT encountered without corresponding "
+                                + "FOR loop in line "
+                                + str(self.get_next_line_number())
+                            )
 
                         self.set_next_line_number(line_numbers[index])
 

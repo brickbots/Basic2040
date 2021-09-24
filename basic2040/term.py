@@ -24,6 +24,7 @@ Also included here is the 'testing' terminal that uses the input/output
 of a basic program for validating the basic module functionality
 """
 
+
 class SimpleTerm:
     def __init__(self):
         return
@@ -107,11 +108,10 @@ class SimpleTerm:
     def is_esc(self):
         """
         Returns true if escape is currently pressed.  Used to generate
-        keyboard interrupt of a running program on devices without 
+        keyboard interrupt of a running program on devices without
         ctrl-c capbilities
         """
         return False
-
 
 
 class TestTerm(SimpleTerm):

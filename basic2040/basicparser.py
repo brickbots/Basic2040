@@ -24,8 +24,9 @@ from time import monotonic
 to three dimensions of fixed size.
 
 """
-class BASICArray:
 
+
+class BASICArray:
     def __init__(self, dimensions):
         """Initialises the object with the specified
         number of dimensions. Maximum number of
@@ -35,7 +36,7 @@ class BASICArray:
         corresponding sizes
 
         """
-        self.dims = min(3,len(dimensions))
+        self.dims = min(3, len(dimensions))
 
         if self.dims == 0:
             raise SyntaxError("Zero dimensional array specified")
@@ -70,12 +71,14 @@ class BASICArray:
     def pretty_print(self):
         print(str(self.data))
 
+
 """Implements a BASIC parser that parses a single
 statement when supplied.
 
 """
-class BASICParser:
 
+
+class BASICParser:
     def __init__(self, basicdata, terminal):
         # Symbol table to hold variable names mapped
         # to values
@@ -100,7 +103,7 @@ class BASICParser:
         # loop variable
         self.last_flowsignal = None
 
-        #file handle list
+        # file handle list
         self.__file_handles = {}
 
         # Store the terminal object
@@ -136,16 +139,13 @@ class BASICParser:
             else:
                 self.__tokenlist.append(token)
 
-
         self.__tokenindex = 0
         # Assign the first token
         self.__token = self.__tokenlist[self.__tokenindex]
         return self.__stmt()
 
     def __advance(self):
-        """Advances to the next token
-
-        """
+        """Advances to the next token"""
         # Move to the next token
         self.__tokenindex += 1
 
@@ -154,15 +154,17 @@ class BASICParser:
             self.__token = self.__tokenlist[self.__tokenindex]
 
     def __consume(self, expected_category):
-        """Consumes a token from the list
-
-        """
+        """Consumes a token from the list"""
         if self.__token.category == expected_category:
             self.__advance()
 
         else:
-            raise RuntimeError('Expecting ' + Token.catnames[expected_category] +
-                               ' in line ' + str(self.__line_number))
+            raise RuntimeError(
+                "Expecting "
+                + Token.catnames[expected_category]
+                + " in line "
+                + str(self.__line_number)
+            )
 
     def __stmt(self):
         """Parses a program statement
@@ -171,8 +173,7 @@ class BASICParser:
         how to branch if necessary, None otherwise
 
         """
-        if self.__token.category in [Token.FOR, Token.IF, Token.NEXT,
-                                     Token.ON]:
+        if self.__token.category in [Token.FOR, Token.IF, Token.NEXT, Token.ON]:
             return self.__compoundstmt()
 
         else:
@@ -255,8 +256,9 @@ class BASICParser:
             # Ignore comments, but raise an error
             # for anything else
             if self.__token.category != Token.REM:
-                raise RuntimeError('Expecting program statement in line '
-                                   + str(self.__line_number))
+                raise RuntimeError(
+                    "Expecting program statement in line " + str(self.__line_number)
+                )
 
     def __printstmt(self):
         """Parses a PRINT statement, causing
@@ -265,7 +267,7 @@ class BASICParser:
         the screen.
 
         """
-        self.__advance()   # Advance past PRINT token
+        self.__advance()  # Advance past PRINT token
 
         fileIO = False
         if self.__token.category == Token.HASH:
@@ -279,17 +281,25 @@ class BASICParser:
             filenum = self.__operand_stack.pop()
 
             if self.__file_handles.get(filenum) == None:
-                raise RuntimeError("PRINT: file #"+str(filenum)+" not opened in line " + str(self.__line_number))
+                raise RuntimeError(
+                    "PRINT: file #"
+                    + str(filenum)
+                    + " not opened in line "
+                    + str(self.__line_number)
+                )
 
             # Process the comma
-            if self.__tokenindex < len(self.__tokenlist) and self.__token.category != Token.COLON:
+            if (
+                self.__tokenindex < len(self.__tokenlist)
+                and self.__token.category != Token.COLON
+            ):
                 self.__consume(Token.COMMA)
 
         # Check there are items to print
         if not self.__tokenindex >= len(self.__tokenlist):
             self.__logexpr()
             if fileIO:
-                self.__file_handles[filenum].write('%s' %(self.__operand_stack.pop()))
+                self.__file_handles[filenum].write("%s" % (self.__operand_stack.pop()))
             else:
                 self.__terminal.write(self.__operand_stack.pop())
 
@@ -301,7 +311,9 @@ class BASICParser:
                 self.__advance()
                 self.__logexpr()
                 if fileIO:
-                    self.__file_handles[filenum].write('%s' %(self.__operand_stack.pop()))
+                    self.__file_handles[filenum].write(
+                        "%s" % (self.__operand_stack.pop())
+                    )
                 else:
                     self.__terminal.write(self.__operand_stack.pop())
 
@@ -343,8 +355,7 @@ class BASICParser:
         self.__expr()
 
         # Set up and return the flow signal
-        return FlowSignal(ftarget=self.__operand_stack.pop(),
-                          ftype=FlowSignal.GOSUB)
+        return FlowSignal(ftarget=self.__operand_stack.pop(), ftype=FlowSignal.GOSUB)
 
     def __returnstmt(self):
         """Parses a RETURN statement"""
@@ -373,7 +384,7 @@ class BASICParser:
 
         """
         left = self.__token.lexeme  # Save lexeme of
-                                    # the current token
+        # the current token
         self.__advance()
 
         if self.__token.category == Token.LEFTPAREN:
@@ -388,13 +399,19 @@ class BASICParser:
             # Check that we are using the right variable name format
             right = self.__operand_stack.pop()
 
-            if left.endswith('$') and not isinstance(right, str):
-                raise SyntaxError('Syntax error: Attempt to assign non string to string variable' +
-                                  ' in line ' + str(self.__line_number))
+            if left.endswith("$") and not isinstance(right, str):
+                raise SyntaxError(
+                    "Syntax error: Attempt to assign non string to string variable"
+                    + " in line "
+                    + str(self.__line_number)
+                )
 
-            elif not left.endswith('$') and isinstance(right, str):
-                raise SyntaxError('Syntax error: Attempt to assign string to numeric variable' +
-                                  ' in line ' + str(self.__line_number))
+            elif not left.endswith("$") and isinstance(right, str):
+                raise SyntaxError(
+                    "Syntax error: Attempt to assign string to numeric variable"
+                    + " in line "
+                    + str(self.__line_number)
+                )
 
             self.__symbol_table[left] = right
 
@@ -444,7 +461,6 @@ class BASICParser:
             else:
                 self.__consume(Token.COMMA)
 
-
     def __arrayassignmentstmt(self, name):
         """Parses an assignment to an array variable
 
@@ -466,15 +482,19 @@ class BASICParser:
                 indexvars.append(self.__operand_stack.pop())
 
         try:
-            BASICarray = self.__symbol_table[name + '_array']
+            BASICarray = self.__symbol_table[name + "_array"]
 
         except KeyError:
-            raise KeyError('Array could not be found in line ' +
-                           str(self.__line_number))
+            raise KeyError(
+                "Array could not be found in line " + str(self.__line_number)
+            )
 
         if BASICarray.dims != len(indexvars):
-            raise IndexError('Incorrect number of indices applied to array ' +
-                             'in line ' + str(self.__line_number))
+            raise IndexError(
+                "Incorrect number of indices applied to array "
+                + "in line "
+                + str(self.__line_number)
+            )
 
         self.__consume(Token.RIGHTPAREN)
         self.__consume(Token.ASSIGNOP)
@@ -484,13 +504,19 @@ class BASICParser:
         # Check that we are using the right variable name format
         right = self.__operand_stack.pop()
 
-        if name.endswith('$') and not isinstance(right, str):
-            raise SyntaxError('Attempt to assign non string to string array' +
-                              ' in line ' + str(self.__line_number))
+        if name.endswith("$") and not isinstance(right, str):
+            raise SyntaxError(
+                "Attempt to assign non string to string array"
+                + " in line "
+                + str(self.__line_number)
+            )
 
-        elif not name.endswith('$') and isinstance(right, str):
-            raise SyntaxError('Attempt to assign string to numeric array' +
-                              ' in line ' + str(self.__line_number))
+        elif not name.endswith("$") and isinstance(right, str):
+            raise SyntaxError(
+                "Attempt to assign string to numeric array"
+                + " in line "
+                + str(self.__line_number)
+            )
 
         # Assign to the specified array index
         try:
@@ -504,15 +530,16 @@ class BASICParser:
                 BASICarray.data[indexvars[0]][indexvars[1]][indexvars[2]] = right
 
         except IndexError:
-            raise IndexError('Array index out of range in line ' +
-                             str(self.__line_number))
+            raise IndexError(
+                "Array index out of range in line " + str(self.__line_number)
+            )
 
     def __openstmt(self):
         """Parses an open statement, opens the indicated file and
         places the file handle into handle table
         """
 
-        self.__advance() # Advance past OPEN token
+        self.__advance()  # Advance past OPEN token
 
         # Acquire the filename
         self.__logexpr()
@@ -528,14 +555,16 @@ class BASICParser:
         elif self.__token.category == Token.OUTPUT:
             accessMode = "w+"
         else:
-            raise SyntaxError('Invalid Open access mode in line ' + str(self.__line_number))
+            raise SyntaxError(
+                "Invalid Open access mode in line " + str(self.__line_number)
+            )
 
-        self.__advance() # Advance past acess type
+        self.__advance()  # Advance past acess type
 
         if self.__token.lexeme != "AS":
-            raise SyntaxError('Expecting AS in line ' + str(self.__line_number))
+            raise SyntaxError("Expecting AS in line " + str(self.__line_number))
 
-        self.__advance() # Advance past AS keyword
+        self.__advance()  # Advance past AS keyword
 
         # Process the # keyword
         self.__consume(Token.HASH)
@@ -547,10 +576,10 @@ class BASICParser:
         branchOnError = False
         if self.__token.category == Token.ELSE:
             branchOnError = True
-            self.__advance() # Advance past ELSE
+            self.__advance()  # Advance past ELSE
 
             if self.__token.category == Token.GOTO:
-                self.__advance()    # Advance past optional GOTO
+                self.__advance()  # Advance past optional GOTO
 
             self.__expr()
 
@@ -558,22 +587,31 @@ class BASICParser:
             if branchOnError:
                 return FlowSignal(ftarget=self.__operand_stack.pop())
             else:
-                raise RuntimeError("File #",filenum," already opened in line " + str(self.__line_number))
+                raise RuntimeError(
+                    "File #",
+                    filenum,
+                    " already opened in line " + str(self.__line_number),
+                )
 
         try:
-            self.__file_handles[filenum] = open(filename,accessMode)
+            self.__file_handles[filenum] = open(filename, accessMode)
 
         except:
             if branchOnError:
                 return FlowSignal(ftarget=self.__operand_stack.pop())
             else:
-                raise RuntimeError('File '+filename+' could not be opened in line ' + str(self.__line_number))
+                raise RuntimeError(
+                    "File "
+                    + filename
+                    + " could not be opened in line "
+                    + str(self.__line_number)
+                )
 
         if accessMode == "r+":
             self.__file_handles[filenum].seek(0)
             filelen = 0
             for lines in self.__file_handles[filenum]:
-                filelen += len(lines)+1
+                filelen += len(lines) + 1
 
             self.__file_handles[filenum].seek(filelen)
 
@@ -584,7 +622,7 @@ class BASICParser:
         the file handle from the handle table
         """
 
-        self.__advance() # Advance past CLOSE token
+        self.__advance()  # Advance past CLOSE token
 
         # Process the # keyword
         self.__consume(Token.HASH)
@@ -594,16 +632,20 @@ class BASICParser:
         filenum = self.__operand_stack.pop()
 
         if self.__file_handles.get(filenum) == None:
-            raise RuntimeError("CLOSE: file #"+str(filenum)+" not opened in line " + str(self.__line_number))
+            raise RuntimeError(
+                "CLOSE: file #"
+                + str(filenum)
+                + " not opened in line "
+                + str(self.__line_number)
+            )
 
         self.__file_handles[filenum].close()
         self.__file_handles.pop(filenum)
 
     def __fseekstmt(self):
-        """Parses an fseek statement, seeks the indicated file position
-        """
+        """Parses an fseek statement, seeks the indicated file position"""
 
-        self.__advance() # Advance past FSEEK token
+        self.__advance()  # Advance past FSEEK token
 
         # Process the # keyword
         self.__consume(Token.HASH)
@@ -613,7 +655,12 @@ class BASICParser:
         filenum = self.__operand_stack.pop()
 
         if self.__file_handles.get(filenum) == None:
-            raise RuntimeError("FSEEK: file #"+str(filenum)+" not opened in line " + str(self.__line_number))
+            raise RuntimeError(
+                "FSEEK: file #"
+                + str(filenum)
+                + " not opened in line "
+                + str(self.__line_number)
+            )
 
         # Process the comma
         self.__consume(Token.COMMA)
@@ -638,7 +685,7 @@ class BASICParser:
             # get the X
             self.__logexpr()
             xpos = self.__operand_stack.pop()
-            
+
             self.__consume(Token.COMMA)
 
             # get the Y
@@ -646,7 +693,6 @@ class BASICParser:
             ypos = self.__operand_stack.pop()
 
             self.__terminal.cursor(xpos, ypos)
-
 
     def __inputstmt(self):
         """Parses an input statement, extracts the input
@@ -668,16 +714,24 @@ class BASICParser:
             filenum = self.__operand_stack.pop()
 
             if self.__file_handles.get(filenum) == None:
-                raise RuntimeError("INPUT: file #"+str(filenum)+" not opened in line " + str(self.__line_number))
+                raise RuntimeError(
+                    "INPUT: file #"
+                    + str(filenum)
+                    + " not opened in line "
+                    + str(self.__line_number)
+                )
 
             # Process the comma
             self.__consume(Token.COMMA)
 
-        prompt = '? '
+        prompt = "? "
         if self.__token.category == Token.STRING:
             if fileIO:
-                raise SyntaxError('Input prompt specified for file I/O ' +
-                                'in line ' + str(self.__line_number))
+                raise SyntaxError(
+                    "Input prompt specified for file I/O "
+                    + "in line "
+                    + str(self.__line_number)
+                )
 
             # Acquire the input prompt
             self.__logexpr()
@@ -688,8 +742,11 @@ class BASICParser:
         variables = []
         if not self.__tokenindex >= len(self.__tokenlist):
             if self.__token.category != Token.NAME:
-                raise ValueError('Expecting NAME in INPUT statement ' +
-                                 'in line ' + str(self.__line_number))
+                raise ValueError(
+                    "Expecting NAME in INPUT statement "
+                    + "in line "
+                    + str(self.__line_number)
+                )
             variables.append(self.__token.lexeme)
             self.__advance()  # Advance past variable
 
@@ -702,11 +759,15 @@ class BASICParser:
         while not valid_input:
             # Gather input from the user into the variables
             if fileIO:
-                inputvals = ((self.__file_handles[filenum].readline().replace("\n","")).replace("\r","")).split(',', (len(variables)-1))
+                inputvals = (
+                    (self.__file_handles[filenum].readline().replace("\n", "")).replace(
+                        "\r", ""
+                    )
+                ).split(",", (len(variables) - 1))
                 valid_input = True
             else:
                 self.__terminal.write(prompt)
-                inputvals = self.__terminal.input().split(',', (len(variables)-1))
+                inputvals = self.__terminal.input().split(",", (len(variables) - 1))
 
             for variable in variables:
                 left = variable
@@ -714,13 +775,13 @@ class BASICParser:
                 try:
                     right = inputvals.pop(0)
 
-                    if left.endswith('$'):
+                    if left.endswith("$"):
                         self.__symbol_table[left] = str(right)
                         valid_input = True
 
-                    elif not left.endswith('$'):
+                    elif not left.endswith("$"):
                         try:
-                            if '.' in right:
+                            if "." in right:
                                 self.__symbol_table[left] = float(right)
 
                             else:
@@ -731,19 +792,21 @@ class BASICParser:
                         except ValueError:
                             if not fileIO:
                                 valid_input = False
-                            self.__terminal.print('Non-numeric input provided to a numeric variable - redo from start')
+                            self.__terminal.print(
+                                "Non-numeric input provided to a numeric variable - redo from start"
+                            )
                             break
 
                 except IndexError:
                     # No more input to process
                     if not fileIO:
                         valid_input = False
-                    self.__terminal.print('Not enough values input - redo from start')
+                    self.__terminal.print("Not enough values input - redo from start")
                     break
 
     def __restorestmt(self):
 
-        self.__advance() # Advance past RESTORE token
+        self.__advance()  # Advance past RESTORE token
 
         # Acquire the line number
         self.__expr()
@@ -779,16 +842,19 @@ class BASICParser:
             left = variable
             right = self.__data_values.pop(0)
 
-            if left.endswith('$'):
+            if left.endswith("$"):
                 # Python inserts quotes around input data
                 if isinstance(right, int):
-                    raise ValueError('Non-string input provided to a string variable ' +
-                                     'in line ' + str(self.__line_number))
+                    raise ValueError(
+                        "Non-string input provided to a string variable "
+                        + "in line "
+                        + str(self.__line_number)
+                    )
 
                 else:
                     self.__symbol_table[left] = right
 
-            elif not left.endswith('$'):
+            elif not left.endswith("$"):
                 try:
                     numeric = float(right)
                     if numeric.is_integer():
@@ -796,8 +862,11 @@ class BASICParser:
                     self.__symbol_table[left] = numeric
 
                 except ValueError:
-                    raise ValueError('Non-numeric input provided to a numeric variable ' +
-                                     'in line ' + str(self.__line_number))
+                    raise ValueError(
+                        "Non-numeric input provided to a numeric variable "
+                        + "in line "
+                        + str(self.__line_number)
+                    )
 
     def __expr(self):
         """Parses a numerical expression consisting
@@ -806,13 +875,13 @@ class BASICParser:
 
         """
         self.__term()  # Pushes value of left term
-                       # onto top of stack
+        # onto top of stack
 
         while self.__token.category in [Token.PLUS, Token.MINUS]:
             savedcategory = self.__token.category
             self.__advance()
             self.__term()  # Pushes value of right term
-                           # onto top of stack
+            # onto top of stack
             rightoperand = self.__operand_stack.pop()
             leftoperand = self.__operand_stack.pop()
 
@@ -829,7 +898,7 @@ class BASICParser:
 
         """
         self.__sign = 1  # Initialise sign to keep track of unary
-                         # minuses
+        # minuses
         self.__factor()  # Leaves value of term on top of stack
 
         while self.__token.category in [Token.TIMES, Token.DIVIDE, Token.MODULO]:
@@ -865,11 +934,11 @@ class BASICParser:
             self.__factor()
 
         elif self.__token.category == Token.UNSIGNEDINT:
-            self.__operand_stack.append(self.__sign*int(self.__token.lexeme))
+            self.__operand_stack.append(self.__sign * int(self.__token.lexeme))
             self.__advance()
 
         elif self.__token.category == Token.UNSIGNEDFLOAT:
-            self.__operand_stack.append(self.__sign*float(self.__token.lexeme))
+            self.__operand_stack.append(self.__sign * float(self.__token.lexeme))
             self.__advance()
 
         elif self.__token.category == Token.STRING:
@@ -926,11 +995,18 @@ class BASICParser:
 
             elif self.__token.lexeme in self.__symbol_table:
                 # Simple variable must be processed
-                self.__operand_stack.append(self.__sign*self.__symbol_table[self.__token.lexeme])
+                self.__operand_stack.append(
+                    self.__sign * self.__symbol_table[self.__token.lexeme]
+                )
 
             else:
-                raise RuntimeError('Name ' + self.__token.lexeme + ' is not defined' +
-                                   ' in line ' + str(self.__line_number))
+                raise RuntimeError(
+                    "Name "
+                    + self.__token.lexeme
+                    + " is not defined"
+                    + " in line "
+                    + str(self.__line_number)
+                )
 
             self.__advance()
 
@@ -952,9 +1028,12 @@ class BASICParser:
             self.__operand_stack.append(self.__evaluate_function(self.__token.category))
 
         else:
-            raise RuntimeError('Expecting factor in numeric expression' +
-                               ' in line ' + str(self.__line_number) +
-                               self.__token.lexeme)
+            raise RuntimeError(
+                "Expecting factor in numeric expression"
+                + " in line "
+                + str(self.__line_number)
+                + self.__token.lexeme
+            )
 
     def __get_array_val(self, BASICarray, indexvars):
         """Extracts the value from the given BASICArray at the specified indexes
@@ -966,8 +1045,11 @@ class BASICParser:
 
         """
         if BASICarray.dims != len(indexvars):
-            raise IndexError('Incorrect number of indices applied to array ' +
-                             'in line ' + str(self.__line_number))
+            raise IndexError(
+                "Incorrect number of indices applied to array "
+                + "in line "
+                + str(self.__line_number)
+            )
 
         # Fetch the value from the array
         try:
@@ -981,8 +1063,9 @@ class BASICParser:
                 arrayval = BASICarray.data[indexvars[0]][indexvars[1]][indexvars[2]]
 
         except IndexError:
-            raise IndexError('Array index out of range in line ' +
-                             str(self.__line_number))
+            raise IndexError(
+                "Array index out of range in line " + str(self.__line_number)
+            )
 
         return arrayval
 
@@ -1026,7 +1109,7 @@ class BASICParser:
         self.__consume(Token.THEN)
 
         if self.__token.category == Token.GOTO:
-            self.__advance()    # Advance past optional GOTO
+            self.__advance()  # Advance past optional GOTO
 
         self.__expr()
         then_jump = self.__operand_stack.pop()
@@ -1041,7 +1124,7 @@ class BASICParser:
             self.__advance()
 
             if self.__token.category == Token.GOTO:
-                self.__advance()    # Advance past optional GOTO
+                self.__advance()  # Advance past optional GOTO
 
             self.__expr()
 
@@ -1067,11 +1150,14 @@ class BASICParser:
 
         # Process the loop variable initialisation
         loop_variable = self.__token.lexeme  # Save lexeme of
-                                             # the current token
+        # the current token
 
-        if loop_variable.endswith('$'):
-            raise SyntaxError('Syntax error: Loop variable is not numeric' +
-                              ' in line ' + str(self.__line_number))
+        if loop_variable.endswith("$"):
+            raise SyntaxError(
+                "Syntax error: Loop variable is not numeric"
+                + " in line "
+                + str(self.__line_number)
+            )
 
         self.__advance()  # Advance past loop variable
         self.__consume(Token.ASSIGNOP)
@@ -1100,8 +1186,11 @@ class BASICParser:
             # Check whether we are decrementing or
             # incrementing
             if step == 0:
-                raise IndexError('Zero step value supplied for loop' +
-                                 ' in line ' + str(self.__line_number))
+                raise IndexError(
+                    "Zero step value supplied for loop"
+                    + " in line "
+                    + str(self.__line_number)
+                )
 
             elif step < 0:
                 increment = False
@@ -1140,8 +1229,7 @@ class BASICParser:
 
         if stop:
             # Loop must terminate
-            return FlowSignal(ftype=FlowSignal.LOOP_SKIP,
-                              ftarget=loop_variable)
+            return FlowSignal(ftype=FlowSignal.LOOP_SKIP, ftarget=loop_variable)
         else:
             # Set up and return the flow signal
             return FlowSignal(ftype=FlowSignal.LOOP_BEGIN)
@@ -1194,14 +1282,14 @@ class BASICParser:
         if saveval < 1 or saveval > len(branch_values) or len(branch_values) == 0:
             return None
         elif branchtype == 1:
-            return FlowSignal(ftarget=branch_values[saveval-1])
+            return FlowSignal(ftarget=branch_values[saveval - 1])
         else:
-            return FlowSignal(ftarget=branch_values[saveval-1],
-                              ftype=FlowSignal.GOSUB)
+            return FlowSignal(
+                ftarget=branch_values[saveval - 1], ftype=FlowSignal.GOSUB
+            )
 
     def __relexpr(self):
-        """Parses a relational expression
-        """
+        """Parses a relational expression"""
         self.__expr()
 
         # Since BASIC uses same operator for both
@@ -1209,9 +1297,14 @@ class BASICParser:
         if self.__token.category == Token.ASSIGNOP:
             self.__token.category = Token.EQUAL
 
-        if self.__token.category in [Token.LESSER, Token.LESSEQUAL,
-                              Token.GREATER, Token.GREATEQUAL,
-                              Token.EQUAL, Token.NOTEQUAL]:
+        if self.__token.category in [
+            Token.LESSER,
+            Token.LESSEQUAL,
+            Token.GREATER,
+            Token.GREATEQUAL,
+            Token.EQUAL,
+            Token.NOTEQUAL,
+        ]:
             savecat = self.__token.category
             self.__advance()
             self.__expr()
@@ -1238,8 +1331,7 @@ class BASICParser:
                 self.__operand_stack.append(left >= right)  # Push True or False
 
     def __logexpr(self):
-        """Parses a logical expression
-        """
+        """Parses a logical expression"""
         self.__notexpr()
 
         while self.__token.category in [Token.OR, Token.AND]:
@@ -1257,8 +1349,7 @@ class BASICParser:
                 self.__operand_stack.append(left and right)  # Push True or False
 
     def __notexpr(self):
-        """Parses a logical not expression
-        """
+        """Parses a logical not expression"""
         if self.__token.category == Token.NOT:
             self.__advance()
             self.__relexpr()
@@ -1314,8 +1405,10 @@ class BASICParser:
                 return random.randint(lo, hi)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to RNDINT in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to RNDINT in line "
+                    + str(self.__line_number)
+                )
 
         if category == Token.MAX:
             self.__consume(Token.LEFTPAREN)
@@ -1324,7 +1417,7 @@ class BASICParser:
             value_list = [self.__operand_stack.pop()]
 
             while self.__token.category == Token.COMMA:
-                self.__advance() # Advance past comma
+                self.__advance()  # Advance past comma
                 self.__expr()
                 value_list.append(self.__operand_stack.pop())
 
@@ -1334,8 +1427,9 @@ class BASICParser:
                 return max(*value_list)
 
             except TypeError:
-                raise TypeError("Invalid type supplied to MAX in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to MAX in line " + str(self.__line_number)
+                )
 
         if category == Token.MIN:
             self.__consume(Token.LEFTPAREN)
@@ -1344,7 +1438,7 @@ class BASICParser:
             value_list = [self.__operand_stack.pop()]
 
             while self.__token.category == Token.COMMA:
-                self.__advance() # Advance past comma
+                self.__advance()  # Advance past comma
                 self.__expr()
                 value_list.append(self.__operand_stack.pop())
 
@@ -1354,8 +1448,9 @@ class BASICParser:
                 return min(*value_list)
 
             except TypeError:
-                raise TypeError("Invalid type supplied to MIN in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to MIN in line " + str(self.__line_number)
+                )
 
         if category == Token.POW:
             self.__consume(Token.LEFTPAREN)
@@ -1374,8 +1469,9 @@ class BASICParser:
                 return math.pow(base, exponent)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to POW in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to POW in line " + str(self.__line_number)
+                )
 
         if category == Token.TERNARY:
             self.__consume(Token.LEFTPAREN)
@@ -1414,8 +1510,9 @@ class BASICParser:
                 return instring[:chars]
 
             except TypeError:
-                raise TypeError("Invalid type supplied to LEFT$ in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to LEFT$ in line " + str(self.__line_number)
+                )
 
         if category == Token.RIGHT:
             self.__consume(Token.LEFTPAREN)
@@ -1434,8 +1531,9 @@ class BASICParser:
                 return instring[-chars:]
 
             except TypeError:
-                raise TypeError("Invalid type supplied to RIGHT$ in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to RIGHT$ in line " + str(self.__line_number)
+                )
 
         if category == Token.MID:
             self.__consume(Token.LEFTPAREN)
@@ -1450,7 +1548,7 @@ class BASICParser:
             start = self.__operand_stack.pop() - 1
 
             if self.__token.category == Token.COMMA:
-                self.__advance() # Advance past comma
+                self.__advance()  # Advance past comma
                 self.__expr()
                 chars = self.__operand_stack.pop()
             else:
@@ -1460,13 +1558,14 @@ class BASICParser:
 
             try:
                 if chars:
-                    return instring[start:start+chars]
+                    return instring[start : start + chars]
                 else:
                     return instring[start:]
 
             except TypeError:
-                raise TypeError("Invalid type supplied to MID$ in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to MID$ in line " + str(self.__line_number)
+                )
 
         if category == Token.INSTR:
             self.__consume(Token.LEFTPAREN)
@@ -1474,8 +1573,9 @@ class BASICParser:
             self.__expr()
             hackstackstring = self.__operand_stack.pop()
             if not isinstance(hackstackstring, str):
-                raise TypeError("Invalid type supplied to INSTR in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to INSTR in line " + str(self.__line_number)
+                )
 
             self.__consume(Token.COMMA)
 
@@ -1484,15 +1584,15 @@ class BASICParser:
 
             start = end = None
             if self.__token.category == Token.COMMA:
-                self.__advance() # Advance past comma
+                self.__advance()  # Advance past comma
                 self.__expr()
                 # Older basic dialets were always 1 based
-                start = self.__operand_stack.pop() -1
+                start = self.__operand_stack.pop() - 1
 
                 if self.__token.category == Token.COMMA:
-                    self.__advance() # Advance past comma
+                    self.__advance()  # Advance past comma
                     self.__expr()
-                    end = self.__operand_stack.pop() -1
+                    end = self.__operand_stack.pop() - 1
 
             self.__consume(Token.RIGHTPAREN)
 
@@ -1504,8 +1604,9 @@ class BASICParser:
                 return hackstackstring.find(needlestring, start, end) + 1
 
             except TypeError:
-                raise TypeError("Invalid type supplied to INSTR in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to INSTR in line " + str(self.__line_number)
+                )
 
         self.__consume(Token.LEFTPAREN)
 
@@ -1519,104 +1620,118 @@ class BASICParser:
                 return math.sqrt(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to SQR in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to SQR in line " + str(self.__line_number)
+                )
 
         elif category == Token.ABS:
             try:
                 return abs(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to ABS in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to ABS in line " + str(self.__line_number)
+                )
 
         elif category == Token.ATN:
             try:
                 return math.atan(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to ATN in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to ATN in line " + str(self.__line_number)
+                )
 
         elif category == Token.COS:
             try:
                 return math.cos(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to COS in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to COS in line " + str(self.__line_number)
+                )
 
         elif category == Token.EXP:
             try:
                 return math.exp(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to EXP in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to EXP in line " + str(self.__line_number)
+                )
 
         elif category == Token.INT:
             try:
                 return math.floor(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to INT in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to INT in line " + str(self.__line_number)
+                )
 
         elif category == Token.ROUND:
             try:
                 return round(value)
 
             except TypeError:
-                raise TypeError("Invalid type supplied to LEN in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to LEN in line " + str(self.__line_number)
+                )
 
         elif category == Token.LOG:
             try:
                 return math.log(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to LOG in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to LOG in line " + str(self.__line_number)
+                )
 
         elif category == Token.SIN:
             try:
                 return math.sin(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to SIN in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to SIN in line " + str(self.__line_number)
+                )
 
         elif category == Token.TAN:
             try:
                 return math.tan(value)
 
             except ValueError:
-                raise ValueError("Invalid value supplied to TAN in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to TAN in line " + str(self.__line_number)
+                )
 
         elif category == Token.CHR:
             try:
                 return chr(value)
 
             except TypeError:
-                raise TypeError("Invalid type supplied to CHR$ in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to CHR$ in line " + str(self.__line_number)
+                )
 
             except ValueError:
-                raise ValueError("Invalid value supplied to CHR$ in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to CHR$ in line " + str(self.__line_number)
+                )
 
         elif category == Token.ASC:
             try:
                 return ord(value)
 
             except TypeError:
-                raise TypeError("Invalid type supplied to ASC in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to ASC in line " + str(self.__line_number)
+                )
 
             except ValueError:
-                raise ValueError("Invalid value supplied to ASC in line " +
-                                 str(self.__line_number))
+                raise ValueError(
+                    "Invalid value supplied to ASC in line " + str(self.__line_number)
+                )
 
         elif category == Token.STR:
             return str(value)
@@ -1637,34 +1752,39 @@ class BASICParser:
                 return len(value)
 
             except TypeError:
-                raise TypeError("Invalid type supplied to LEN in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to LEN in line " + str(self.__line_number)
+                )
 
         elif category == Token.UPPER:
             if not isinstance(value, str):
-                raise TypeError("Invalid type supplied to UPPER$ in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to UPPER$ in line " + str(self.__line_number)
+                )
 
             return value.upper()
 
         elif category == Token.LOWER:
             if not isinstance(value, str):
-                raise TypeError("Invalid type supplied to LOWER$ in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to LOWER$ in line " + str(self.__line_number)
+                )
 
             return value.lower()
 
         elif category == Token.TAB:
             # Return a string of value spaces
             if not isinstance(value, int):
-                raise TypeError("Invalid type supplied to TAB in line " +
-                                 str(self.__line_number))
+                raise TypeError(
+                    "Invalid type supplied to TAB in line " + str(self.__line_number)
+                )
 
             return " " * value
 
         else:
-            raise SyntaxError("Unrecognised function in line " +
-                              str(self.__line_number))
+            raise SyntaxError(
+                "Unrecognised function in line " + str(self.__line_number)
+            )
 
     def __randomizestmt(self):
         """Implements a function to seed the random

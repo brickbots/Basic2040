@@ -36,11 +36,10 @@ from .basictoken import BASICToken as Token
 
 
 class Lexer:
-
     def __init__(self):
 
         self.__column = 0  # Current column number
-        self.__stmt = ''   # Statement string being processed
+        self.__stmt = ""  # Statement string being processed
 
     def tokenize(self, stmt):
         """Returns a list of tokens obtained by
@@ -58,7 +57,7 @@ class Lexer:
         # Process every character until we
         # reach the end of the statement string
         c = self.__get_next_char()
-        while c != '':
+        while c != "":
 
             # Skip any preceding whitespace
             while c.isspace():
@@ -66,7 +65,7 @@ class Lexer:
 
             # Construct a token, column count already
             # incremented
-            token = Token(self.__column - 1, None, '')
+            token = Token(self.__column - 1, None, "")
 
             # Process strings
             if c == '"':
@@ -89,7 +88,7 @@ class Lexer:
                         token.lexeme += c  # Append the current char to the lexeme
                         c = self.__get_next_char()
 
-                        if c == '':
+                        if c == "":
                             raise SyntaxError("Mismatched quotes")
 
                         if c == '"':
@@ -109,7 +108,7 @@ class Lexer:
                     # Break if next character is not a digit
                     # and this is not the first decimal point
                     if not c.isdigit():
-                        if c == '.':
+                        if c == ".":
                             if not found_point:
                                 found_point = True
                                 token.category = Token.UNSIGNEDFLOAT
@@ -130,7 +129,7 @@ class Lexer:
 
                     # Break if not a letter or a dollar symbol
                     # (the latter is used for string variable names)
-                    if not ((c.isalpha() or c.isdigit()) or c == '_' or c == '$'):
+                    if not ((c.isalpha() or c.isdigit()) or c == "_" or c == "$"):
                         break
 
                 # Normalise keywords and names to upper case
@@ -146,7 +145,7 @@ class Lexer:
 
                 # Remark Statments - process rest of statement without checks
                 if token.lexeme == "REM":
-                    while c!= '':
+                    while c != "":
                         token.lexeme += c  # Append the current char to the lexeme
                         c = self.__get_next_char()
 
@@ -159,7 +158,7 @@ class Lexer:
                 if twochar in Token.smalltokens:
                     token.category = Token.smalltokens[twochar]
                     token.lexeme = twochar
-                    c = self.__get_next_char() # Move past end of token
+                    c = self.__get_next_char()  # Move past end of token
 
                 else:
                     # One char token
@@ -167,8 +166,8 @@ class Lexer:
                     token.lexeme = save
 
             # We do not recognise this token
-            elif c != '':
-                raise SyntaxError('Syntax error')
+            elif c != "":
+                raise SyntaxError("Syntax error")
 
             # Append the new token to the list
             tokenlist.append(token)
@@ -189,9 +188,10 @@ class Lexer:
             return next_char
 
         else:
-            return ''
+            return ""
 
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

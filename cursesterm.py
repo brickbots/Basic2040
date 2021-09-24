@@ -26,6 +26,7 @@ operation
 
 import curses
 
+
 class CursesTerm:
     def __init__(self, stdscr):
         self.__stdscr = stdscr
@@ -177,5 +178,3 @@ class CursesTerm:
         business
         """
         return 0
-
-

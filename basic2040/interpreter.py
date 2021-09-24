@@ -26,6 +26,7 @@ from .lexer import Lexer
 from .program import Program
 from sys import stderr
 
+
 class Interpreter:
     """
     Implements an interactive interpreter which
