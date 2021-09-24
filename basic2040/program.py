@@ -295,6 +295,8 @@ class Program:
             # Run through the program until the
             # has line number has been reached
             while True:
+                if self.__terminal.is_esc():
+                    raise KeyboardInterrupt
                 flowsignal = self.__execute(self.get_next_line_number())
                 self.__parser.last_flowsignal = flowsignal
 

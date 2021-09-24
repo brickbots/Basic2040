@@ -104,6 +104,15 @@ class SimpleTerm:
         """
         return 0
 
+    def is_esc(self):
+        """
+        Returns true if escape is currently pressed.  Used to generate
+        keyboard interrupt of a running program on devices without 
+        ctrl-c capbilities
+        """
+        return False
+
+
 
 class TestTerm(SimpleTerm):
     """
