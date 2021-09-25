@@ -1,29 +1,23 @@
-```
-  ___   _   ___ ___ ___ ___ __  _ _   __
- | _ ) /_\ / __|_ _/ __|_  )  \| | | /  \
- | _ \/ _ \\__ \| | (__ / / () |_  _| () |
- |___/_/ \_\___/___\___/___\__/  |_| \__/
-
->
-```
-# A Modular BASIC Interpreter for Embedded Systems 
-
-Read on for an overview or jump right to information on:
-* [Integration into projects](docs/integration.md)
-* [BASIC Dialect details](docs/dialect.md)
+# A BASIC Interpreter - Program like it's 1979!
 
 ## Introduction
 
-Originally forked from the excellent [PyBasic](https://github.com/richpl/PyBasic), this version has been 
-restructured to make it easy to use as a module in other proejcts, specifically embedded systems running 
-Circuit/Micro python.  It still runs in cPython, but has been optimized for lower memory environments.
+A simple interactive BASIC interpreter written in Python 3. It is based heavily on material in the excellent book _Writing Interpreters
+and Compilers for the Raspberry Pi Using Python_ by Anthony J. Dos Reis. However, I have had to adapt the Python interpreter presented
+in the book, both to work with the BASIC programming language and to produce an interactive command line interface. The interpreter
+therefore adopts the key techniques for interpreter and compiler writing, the use of a lexical analysis stage followed by a recursive descent parser
+which implements the context free grammar representing the target programming language.
 
-The primary differences from PyBasic are:
-* Core code in the basic2040 module so it can be used without modification in other projects
-* I/O Abstration to allow various screen/keyboard setups
-* Easy ability to add new BASIC functions/keywords for enabling hardware specific functions
-* Lower memory usage at the expense of code complexity
+The interpreter is a homage to the home computers of the early 1980s, and when executed, presents an interactive prompt ('>')
+typical of such a home computer. Commands to run, list, save and load BASIC programs can be entered at the prompt as well as
+program statements themselves.
 
+The BASIC dialect that has been implemented is slightly simplified, and naturally avoids machine specific instructions,
+such as those concerned with sound and graphics for example.
+
+There is reasonably comprehensive error checking. Syntax errors will be picked up and reported on by the
+lexical analyser as statements are entered. Runtime errors will highlight the cause and the line number of
+the offending statement.
 
 The interpreter can be invoked as follows:
 
