@@ -16,7 +16,7 @@ Read on for an overview or jump right to information on:
 
 Originally forked from the excellent [PyBasic](https://github.com/richpl/PyBasic), this version has been 
 restructured to make it easy to use as a module in other proejcts, specifically embedded systems running 
-Circuit/Micro python.  It still runs in cPython, but has been optimized for lower memory environments. 
+Circuit/Micro python.  It still runs in cPython (required Python 3+), but has been optimized for lower memory environments. 
 The 2040 in Basic2040 refers to a popular Circuit Python compatible microcontroller, the Pi2040, which
 is available as part of several different boards.
 
