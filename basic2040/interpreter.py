@@ -25,6 +25,7 @@ from .basictoken import BASICToken as Token
 from .lexer import Lexer
 from .program import Program
 from sys import stderr
+from gc import collect
 
 
 class Interpreter:
@@ -43,6 +44,10 @@ class Interpreter:
             self.__terminal = SimpleTerm()
         else:
             self.__terminal = terminal
+
+        # Garbage collect
+        collect()
+        self.program = Program(self.__terminal)
 
     def main(self):
         """
@@ -80,7 +85,6 @@ class Interpreter:
                 self.__terminal.print(self.program.str_statement(line_number))
 
     def __interpreter(self, prompt="> "):
-        self.program = Program(self.__terminal)
 
         # Continuously accept user input and act on it until
         # the user enters 'EXIT'
@@ -171,6 +175,7 @@ class Interpreter:
                         self.program.delete()
                         self.program = None
                         # Opportunity for GC here
+                        collect()
                         self.program = Program(self.__terminal)
 
                     elif tokenlist[0].category == Token.CLEAR:

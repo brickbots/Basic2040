@@ -178,3 +178,17 @@ class CursesTerm:
         business
         """
         return 0
+
+        # This *should* work but does not seem to
+        self.__stdscr.nodelay(True)
+        pollchar = self.__stdscr.getch()
+        self.__stdscr.nodelay(False)
+        if pollchar == -1:
+            pollchar = 0
+        return pollchar
+
+    def is_esc(self):
+        if self.poll_char() == 27:
+            return True
+        else:
+            return False
