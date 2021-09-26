@@ -36,6 +36,124 @@ An example interpreter can be invoked as follows:
 $ python example.py
 ```
 
+You can immediately begin entering program lines or commands at the > prompt
+
+```
+> 10 PRINT "HELLO"
+> RUN
+HELLO
+```
+
+### Interpreter Commands
+
+Programs may be listed using the **LIST** command:
+
+```
+> LIST
+10 LET I = 10
+20 PRINT I
+>
+```
+
+The list command can take arguments to refine the line selection listed
+
+`LIST 50` Lists only line 50
+
+`LIST 50-100` Lists lines 50 through 100 inclusive
+
+`LIST 50 100` Also Lists lines 50 through 100 inclusive, almost any delimiter
+works here
+
+`LIST -100` Lists from the start of the program through line 100 inclusive
+
+`LIST 50-` Lists from line 50 to the end of the program
+
+
+A program is executed using the **RUN** command:
+
+```
+> RUN
+10
+>
+```
+
+A program may be saved to disk using the **SAVE** command:
+
+```
+> SAVE myprogram
+Program written to file
+>
+```
+
+The program may be re-loaded from disk using the **LOAD** command:
+
+```
+> LOAD myprogram
+Program read from file
+>
+```
+
+When loading or saving, the .bas extension is assumed if not provided and files are expected in the BAS directory
+under the current working path. You can load files from any location, with any extension, but using quotes and
+providing the full path:
+
+```
+> LOAD "/path/to/program/myprogram.foo"
+```
+
+Individual program statements may be deleted by entering their line number only:
+
+```
+> 10 PRINT "Hello"
+> 20 PRINT "Goodbye"
+> LIST
+10 PRINT "Hello"
+20 PRINT "Goodbye"
+> 10
+> LIST
+20 PRINT "Goodbye"
+>
+```
+
+The program may be erased entirely from memory using the **NEW** command:
+
+```
+> 10 LET I = 10
+> LIST
+10 LET I = 10
+> NEW
+> LIST
+>
+```
+
+Finally, it is possible to terminate the interpreter by issuing the **EXIT** command:
+
+```
+> EXIT
+c:\
+```
+
+On occasion, it might be necessary to force termination of a program and return to the
+interpreter, for example, because it is caught in an infinite loop. This can be achieved by
+using Ctrl-C to force the program to stop:
+
+```
+> 10 PRINT "Hello"
+> 20 GOTO 10
+> RUN
+"Hello"
+"Hello"
+"Hello"
+...
+...
+<Ctrl-C>
+Program terminated
+> LIST
+10 PRINT "Hello"
+20 GOTO 10
+>
+```
+
 ## Terminals
 
 
@@ -65,8 +183,9 @@ repo for examples using various screen/keyboard options for microcontrollers.
 
 A number of example BASIC programs have been supplied in the repository, in the examples directory:
 
-* *regression.bas* - A program to exercise the key programming language constructs
-in such a way as to allow verification that the interpreter is functioning correctly.
+* *tests.bas* - A program to exercise the key programming language constructs
+in such a way as to allow verification that the interpreter is functioning correctly. This program is
+designed to be used with the special testing terminal for automated testing.
 
 * *factorial.bas* - A simple BASIC program to take a number, *N*, as input from the user and
 calculate the corresponding factorial *N!*.
