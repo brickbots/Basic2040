@@ -130,7 +130,7 @@ Finally, it is possible to terminate the interpreter by issuing the **EXIT** com
 
 ```
 > EXIT
-c:\
+$
 ```
 
 On occasion, it might be necessary to force termination of a program and return to the
