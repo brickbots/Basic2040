@@ -44,18 +44,20 @@ class Interpreter:
         If debug is True, the main exception handler is bypassed so
         full tracebacks can propigate
         """
+        print("Interp Init")
 
         self.lexer = Lexer()
         if not terminal:
+            print("TTT")
             from .term import SimpleTerm
 
-            self.__terminal = SimpleTerm()
+            self._terminal = SimpleTerm()
         else:
-            self.__terminal = terminal
+            self._terminal = terminal
 
         # Garbage collect
         collect()
-        self.program = Program(self.__terminal)
+        self.program = Program(self._terminal)
         self.debug = debug
 
     def main(self):
@@ -70,10 +72,10 @@ class Interpreter:
  | _ \\/ _ \\\\__ \| | (__ / / () |_  _| () |
  |___/_/ \\_\\___/___\\___/___\\__/  |_| \\__/
               """
-        self.__terminal.print(banner)
-        self.__interpreter()
+        self._terminal.print(banner)
+        self._interpreter()
 
-    def __list(self, start_line=None, end_line=None):
+    def _list(self, start_line=None, end_line=None):
         """
         Handles textual listing of a program to the screen.
         can be overwritten to implement pagination or other
@@ -91,15 +93,15 @@ class Interpreter:
 
         for line_number in line_numbers:
             if int(line_number) >= start_line and int(line_number) <= end_line:
-                self.__terminal.print(self.program.str_statement(line_number))
+                self._terminal.print(self.program.str_statement(line_number))
 
-    def __interpreter(self, prompt="> "):
+    def _interpreter(self, prompt="> "):
 
         # Continuously accept user input and act on it until
         # the user enters 'EXIT'
         while True:
-            self.__terminal.write(prompt)
-            stmt = self.__terminal.input()
+            self._terminal.write(prompt)
+            stmt = self._terminal.input()
 
             try:
                 tokenlist = self.lexer.tokenize(stmt)
@@ -135,33 +137,33 @@ class Interpreter:
                             self.program.execute()
 
                         except KeyboardInterrupt:
-                            self.__terminal.print("Program terminated")
+                            self._terminal.print("Program terminated")
 
                     # List the program
                     elif tokenlist[0].category == Token.LIST:
                         if len(tokenlist) == 2:
-                            self.__list(
+                            self._list(
                                 int(tokenlist[1].lexeme), int(tokenlist[1].lexeme)
                             )
                         elif len(tokenlist) == 3:
                             # if we have 3 tokens, it might be LIST x y for a range
                             # or LIST -y or list x- for a start to y, or x to end
                             if tokenlist[1].lexeme == "-":
-                                self.__list(None, int(tokenlist[2].lexeme))
+                                self._list(None, int(tokenlist[2].lexeme))
                             elif tokenlist[2].lexeme == "-":
-                                self.__list(int(tokenlist[1].lexeme), None)
+                                self._list(int(tokenlist[1].lexeme), None)
                             else:
-                                self.__list(
+                                self._list(
                                     int(tokenlist[1].lexeme), int(tokenlist[2].lexeme)
                                 )
                         elif len(tokenlist) == 4:
                             # if we have 4, assume LIST x-y or some other
                             # delimiter for a range
-                            self.__list(
+                            self._list(
                                 int(tokenlist[1].lexeme), int(tokenlist[3].lexeme)
                             )
                         else:
-                            self.__list()
+                            self._list()
 
                     # Save the program to disk
                     elif tokenlist[0].category == Token.SAVE:
@@ -169,7 +171,7 @@ class Interpreter:
                         if "/" not in filepath:
                             filepath = "BAS/" + filepath
                         self.program.save(tokenlist[1].lexeme)
-                        self.__terminal.print("Program written to file")
+                        self._terminal.print("Program written to file")
 
                     # Load the program from disk
                     elif tokenlist[0].category == Token.LOAD:
@@ -177,7 +179,7 @@ class Interpreter:
                         if "/" not in filepath:
                             filepath = "BAS/" + filepath
                         self.program.load(filepath)
-                        self.__terminal.print("Program read from file")
+                        self._terminal.print("Program read from file")
 
                     # Delete the program from memory
                     elif tokenlist[0].category == Token.NEW:
@@ -185,16 +187,16 @@ class Interpreter:
                         self.program = None
                         # Opportunity for GC here
                         collect()
-                        self.program = Program(self.__terminal)
+                        self.program = Program(self._terminal)
 
                     elif tokenlist[0].category == Token.CLEAR:
-                        self.__terminal.clear()
+                        self._terminal.clear()
 
                     # Unrecognised input
                     else:
-                        self.__terminal.print("Unrecognised input")
+                        self._terminal.print("Unrecognised input")
                         for token in tokenlist:
-                            self.__terminal.print(str(token))
+                            self._terminal.print(str(token))
 
             # Trap all exceptions so that interpreter
             # keeps running
@@ -202,4 +204,4 @@ class Interpreter:
                 if self.debug == True:
                     raise (e)
                 else:
-                    self.__terminal.print(str(e))
+                    self._terminal.print(str(e))
