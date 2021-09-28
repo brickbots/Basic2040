@@ -37,6 +37,14 @@ class Interpreter:
     """
 
     def __init__(self, terminal=None, debug=False):
+        """
+        Terminal must be a compatible class, see term.py for reference
+        implementation
+
+        If debug is True, the main exception handler is bypassed so
+        full tracebacks can propigate
+        """
+
         self.lexer = Lexer()
         if not terminal:
             from .term import SimpleTerm
@@ -192,6 +200,6 @@ class Interpreter:
             # keeps running
             except Exception as e:
                 if self.debug == True:
-                    raise(e)
+                    raise (e)
                 else:
                     self.__terminal.print(str(e))
