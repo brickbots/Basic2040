@@ -36,7 +36,7 @@ class Interpreter:
     lines
     """
 
-    def __init__(self, terminal=None):
+    def __init__(self, terminal=None, debug=False):
         self.lexer = Lexer()
         if not terminal:
             from .term import SimpleTerm
@@ -48,6 +48,7 @@ class Interpreter:
         # Garbage collect
         collect()
         self.program = Program(self.__terminal)
+        self.debug = debug
 
     def main(self):
         """
@@ -190,4 +191,7 @@ class Interpreter:
             # Trap all exceptions so that interpreter
             # keeps running
             except Exception as e:
-                self.__terminal.print(str(e))
+                if self.debug == True:
+                    raise(e)
+                else:
+                    self.__terminal.print(str(e))
