@@ -44,11 +44,9 @@ class Interpreter:
         If debug is True, the main exception handler is bypassed so
         full tracebacks can propigate
         """
-        print("Interp Init")
 
         self.lexer = Lexer()
         if not terminal:
-            print("TTT")
             from .term import SimpleTerm
 
             self._terminal = SimpleTerm()
