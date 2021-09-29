@@ -91,7 +91,7 @@ class Interpreter:
 
         for line_number in line_numbers:
             if int(line_number) >= start_line and int(line_number) <= end_line:
-                self._terminal.print(self.program.str_statement(line_number))
+                self._terminal.print(str(self.program.str_statement(line_number)))
 
     def _interpreter(self, prompt="> "):
 

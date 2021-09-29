@@ -301,7 +301,7 @@ class BASICParser:
             if fileIO:
                 self.__file_handles[filenum].write("%s" % (self.__operand_stack.pop()))
             else:
-                self.__terminal.write(self.__operand_stack.pop())
+                self.__terminal.write(str(self.__operand_stack.pop()))
 
             while self.__token.category == Token.SEMICOLON:
                 if self.__tokenindex == len(self.__tokenlist) - 1:
@@ -315,7 +315,7 @@ class BASICParser:
                         "%s" % (self.__operand_stack.pop())
                     )
                 else:
-                    self.__terminal.write(self.__operand_stack.pop())
+                    self.__terminal.write(str(self.__operand_stack.pop()))
 
         # Final newline
         if fileIO:
@@ -766,7 +766,7 @@ class BASICParser:
                 ).split(",", (len(variables) - 1))
                 valid_input = True
             else:
-                self.__terminal.write(prompt)
+                self.__terminal.write(str(prompt))
                 inputvals = self.__terminal.input().split(",", (len(variables) - 1))
 
             for variable in variables:
