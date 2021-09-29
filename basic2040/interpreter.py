@@ -168,7 +168,7 @@ class Interpreter:
                         filepath = tokenlist[1].lexeme
                         if "/" not in filepath:
                             filepath = "BAS/" + filepath
-                        self.program.save(tokenlist[1].lexeme)
+                        self.program.save(filepath)
                         self._terminal.print("Program written to file")
 
                     # Load the program from disk
